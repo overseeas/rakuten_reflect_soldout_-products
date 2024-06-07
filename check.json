@@ -1,0 +1,28 @@
+{
+  "inventories": [
+    {
+      "manageNumber": "larmemoistureuv-test5",
+      "variantId": "r-sku00000001",
+      "mode": "ABSOLUTE",
+      "quantity": 0
+    },
+    {
+      "manageNumber": "larmemoistureuv-test5",
+      "variantId": "r-sku00000002",
+      "mode": "ABSOLUTE",
+      "quantity": 0
+    },
+    {
+      "manageNumber": "larmemoistureuv-test5",
+      "variantId": "r-sku00000003",
+      "mode": "ABSOLUTE",
+      "quantity": 9999
+    },
+    {
+      "manageNumber": "larmemoistureuv-test5",
+      "variantId": "r-sku00000004",
+      "mode": "ABSOLUTE",
+      "quantity": 0
+    }
+  ]
+}
