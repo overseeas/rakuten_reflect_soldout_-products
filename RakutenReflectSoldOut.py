@@ -26,21 +26,23 @@ def get_credentials():
     return data
 
 
-def order_login(driver, credentials):
+def order_login(driver, credentials) -> None:
     driver.get("https://ace-1648.suruzo.biz/auth/login/?")
     assert "株式会社エース" in driver.title
     #id
     elem = driver.find_element(By.ID, "emp_cd")
     elem.clear()
-    elem.send_keys(credentials["order"]["id"])
+    elem.send_keys(credentials["suruzo"]["id"])
     elem.send_keys(Keys.RETURN)
 
     #password
     elem = driver.find_element(By.ID, "password")
     elem.clear()
-    elem.send_keys(credentials["order"]["password"])
+    elem.send_keys(credentials["suruzo"]["password"])
     elem.send_keys(Keys.RETURN)
-    assert "トップ画面" in driver.title
+    time.sleep(3)
+    if "トップ画面" in driver.title:
+        return True
 
 def delete_files_in_directory(directory_path):
    try:
@@ -113,7 +115,7 @@ def open_browser():
     chromedriver = "C:\\Users\\winact_user\\Documents\\WinActor\\webdriver\\chromedriver.exe"
     return webdriver.Chrome(executable_path=chromedriver, options=chromeOptions)
 
-def verify_with_master(data):
+def verify_with_master(data) -> None:
 
     wb = load_workbook(MASTER, read_only=True)
     ws = wb.active
@@ -122,7 +124,6 @@ def verify_with_master(data):
             if data == cell.value:
                 # Access other cells in the same row as needed
                 return ws.cell(row=cell.row, column=20).value  # Change column number as required
-    return None
 
 def encode_api_credentials(service_secret, licenseKey):
     data = service_secret + ":" + licenseKey
