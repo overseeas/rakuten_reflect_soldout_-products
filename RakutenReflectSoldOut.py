@@ -1,6 +1,7 @@
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.service import Service
 import time
 import json
 import datetime
@@ -117,8 +118,8 @@ def open_browser():
     prefs = {"download.default_directory" : DOWNLOADS}
     chromeOptions.add_experimental_option("prefs",prefs)
     chromeOptions.add_argument('--headless')
-    chromedriver = "C:\\Users\\winact_user\\Documents\\WinActor\\webdriver\\chromedriver.exe"
-    return webdriver.Chrome(executable_path=chromedriver, options=chromeOptions)
+    service = Service(excutable_path = "C:\\Users\\winact_user\\Documents\\WinActor\\webdriver\\chromedriver.exe")
+    return webdriver.Chrome(service=service, options=chromeOptions)
 
 def verify_with_master(data):
     wb = load_workbook(MASTER, read_only=True)
