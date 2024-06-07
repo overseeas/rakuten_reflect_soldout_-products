@@ -10,8 +10,6 @@ import csv
 import base64
 import requests
 from openpyxl import load_workbook
-import base64
-import requests
 import shutil
 
 #PATH
@@ -118,7 +116,7 @@ def open_browser():
     chromeOptions = webdriver.ChromeOptions()
     prefs = {"download.default_directory" : DOWNLOADS}
     chromeOptions.add_experimental_option("prefs",prefs)
-    #chromeOptions.add_argument('--headless')
+    chromeOptions.add_argument('--headless')
     chromedriver = "C:\\Users\\winact_user\\Documents\\WinActor\\webdriver\\chromedriver.exe"
     return webdriver.Chrome(executable_path=chromedriver, options=chromeOptions)
 
