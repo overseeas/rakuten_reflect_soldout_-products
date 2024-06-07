@@ -1,28 +1,551 @@
 {
-  "inventories": [
+  "manageNumber": "larmemoistureuv-test5",
+  "itemNumber": "larmemoistureuv",
+  "itemType": "NORMAL",
+  "title": "SKU-test【カラー×度数】JAN（規格番号）",
+  "whiteBgImage": {
+    "type": "CABINET",
+    "location": "/06307257/larmemoistureuv.jpg"
+  },
+  "genreId": "408099",
+  "hideItem": false,
+  "unlimitedInventoryFlag": false,
+  "features": {
+    "searchVisibility": "ALWAYS_HIDDEN",
+    "shopContact": false,
+    "review": "SHOP_SETTING",
+    "displayManufacturerContents": true,
+    "displayNormalCartButton": true,
+    "displaySubscriptionCartButton": false,
+    "inventoryDisplay": "HIDDEN_STOCK"
+  },
+  "payment": {
+    "taxIncluded": false,
+    "cashOnDeliveryFeeIncluded": false
+  },
+  "itemDisplaySequence": 999999999,
+  "layout": {
+    "itemLayoutId": 1,
+    "navigationId": 0,
+    "layoutSequenceId": 0,
+    "smallDescriptionId": 0,
+    "largeDescriptionId": 0,
+    "showcaseId": 0
+  },
+  "variantSelectors": [
     {
-      "manageNumber": "larmemoistureuv-test5",
-      "variantId": "r-sku00000001",
-      "mode": "ABSOLUTE",
-      "quantity": 0
+      "key": "Key0",
+      "displayName": "★カラー",
+      "values": [
+        {
+          "displayValue": "【1day】アイスグレーブラウン"
+        },
+        {
+          "displayValue": "【1day】スノーブルー"
+        },
+        {
+          "displayValue": "【1month】アイスグレーブラウン"
+        },
+        {
+          "displayValue": "【1month】スノーブルー"
+        }
+      ]
     },
     {
-      "manageNumber": "larmemoistureuv-test5",
-      "variantId": "r-sku00000002",
-      "mode": "ABSOLUTE",
-      "quantity": 0
-    },
-    {
-      "manageNumber": "larmemoistureuv-test5",
-      "variantId": "r-sku00000003",
-      "mode": "ABSOLUTE",
-      "quantity": 9999
-    },
-    {
-      "manageNumber": "larmemoistureuv-test5",
-      "variantId": "r-sku00000004",
-      "mode": "ABSOLUTE",
-      "quantity": 0
+      "key": "Key1",
+      "displayName": "★度数",
+      "values": [
+        {
+          "displayValue": "±0.00(度なし)"
+        },
+        {
+          "displayValue": "-1.00"
+        }
+      ]
     }
-  ]
+  ],
+  "variants": {
+    "r-sku00000008": {
+      "selectorValues": {
+        "Key1": "-1.00",
+        "Key0": "【1month】スノーブルー"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "2",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "4",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000007": {
+      "selectorValues": {
+        "Key1": "±0.00(度なし)",
+        "Key0": "【1month】スノーブルー"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "2",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "3",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000006": {
+      "selectorValues": {
+        "Key1": "-1.00",
+        "Key0": "【1month】アイスグレーブラウン"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "2",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "2",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000005": {
+      "selectorValues": {
+        "Key1": "±0.00(度なし)",
+        "Key0": "【1month】アイスグレーブラウン"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "2",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "1",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000004": {
+      "selectorValues": {
+        "Key1": "-1.00",
+        "Key0": "【1day】スノーブルー"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "2",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "4582638838041(LARME-13)",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリー ズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000003": {
+      "selectorValues": {
+        "Key1": "±0.00(度なし)",
+        "Key0": "【1day】スノーブルー"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "2",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "4582638838010(LARME-13)",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000002": {
+      "selectorValues": {
+        "Key1": "-1.00",
+        "Key0": "【1day】アイスグレーブラウン"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "7",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "4582638838362(LARME-14)",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    },
+    "r-sku00000001": {
+      "selectorValues": {
+        "Key1": "±0.00(度なし)",
+        "Key0": "【1day】アイスグレーブラウン"
+      },
+      "restockOnCancel": false,
+      "backOrderFlag": false,
+      "normalDeliveryDateId": 1,
+      "backOrderDeliveryDateId": 2,
+      "articleNumber": {
+        "exemptionReason": 5
+      },
+      "standardPrice": "1600",
+      "referencePrice": {
+        "displayType": "OPEN_PRICE"
+      },
+      "shipping": {
+        "shippingMethodGroup": "7",
+        "postageIncluded": false,
+        "singleItemShipping": 0
+      },
+      "merchantDefinedSkuId": "4582638838331(LARME-14)",
+      "hidden": false,
+      "features": {
+        "restockNotification": false,
+        "noshi": false
+      },
+      "attributes": [
+        {
+          "name": "シリーズ名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "ブランド名",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "メーカー型番",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "原産国／製造国",
+          "values": [
+            "-"
+          ]
+        },
+        {
+          "name": "代表カラー",
+          "values": [
+            "-"
+          ]
+        }
+      ]
+    }
+  },
+  "created": "2024-05-23T10:38:59+09:00",
+  "updated": "2024-05-23T18:50:49+09:00"
 }

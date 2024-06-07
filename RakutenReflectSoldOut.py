@@ -84,7 +84,8 @@ def order_search(driver, search_from, search_to):
     search_result = driver.find_element(By.CLASS_NAME, "headPageChanger").text
     
     #検索結果の数を返し
-    return re.search("[,\d]+(?=件)", search_result).group(0)
+    counts = re.search("[,\d]+(?=件)", search_result)
+    return counts.group(0)
     
 def download_file(driver, path_to_downloads, extension):
     driver.find_element(By.NAME, "output_p_main").click()
@@ -117,7 +118,7 @@ def open_browser():
     chromeOptions = webdriver.ChromeOptions()
     prefs = {"download.default_directory" : DOWNLOADS}
     chromeOptions.add_experimental_option("prefs",prefs)
-    chromeOptions.add_argument('--headless')
+    #chromeOptions.add_argument('--headless')
     chromedriver = "C:\\Users\\winact_user\\Documents\\WinActor\\webdriver\\chromedriver.exe"
     return webdriver.Chrome(executable_path=chromedriver, options=chromeOptions)
 
@@ -144,56 +145,69 @@ def get_sku(managenumber, color_code, power):
     r = requests.get("https://api.rms.rakuten.co.jp/es/2.0/items/manage-numbers/" + str(managenumber), headers=auth_headers)
     time.sleep(0.2)
     if r.status_code == 200:
-        if r.json()["variants"]:
-            for sku, code in r.json()["variants"].items():
-                if "(" + color_code + ")" in code["merchantDefinedSkuId"] and code["selectorValues"]["Key1"] == power:
+        try:
+            data = r.json()["variants"]
+            for sku, code in data.items():
+                if "(" + color_code + ")" in code["selectorValues"]["Key0"] and code["selectorValues"]["Key1"] == power:
                     return sku
+        except:
+            pass
     return False
 
 
-def update_stock(bulkdata):
+def update_stock(bulkdatas):
     credentials = get_credentials()
     auth_headers = encode_api_credentials(credentials["rakuten"]["serviceSecret"], credentials["rakuten"]["licenseKey"])
     auth_headers.update({"Content-Type": "application/json"})
-    print(bulkdata)
-    if input("OK to update????? [OK] to proceed") == "OK":
-        r = requests.post("https://api.rms.rakuten.co.jp/es/2.0/inventories/bulk-upsert", json=bulkdata, headers=auth_headers)
-        if r.status_code == 204:
-            return True
-        else:
-            return r.text
-    return False
+    listed_bulkdatas = [bulkdatas[i:i + 400] for i in range(0, len(bulkdatas), 400)]
+    print(listed_bulkdatas)
+    if input("OK to update????? [OK] to proceed: ") == "OK":
+        for bulkdata in listed_bulkdatas:
+            json_data = {"inventories": bulkdata}
+            r = requests.post("https://api.rms.rakuten.co.jp/es/2.0/inventories/bulk-upsert", json=json_data, headers=auth_headers)
+            if r.status_code != 204:
+                return False
+            time.sleep(1)    
+    return True
         
 def record_searched_time(time):
-    f = open("config/latestTime.txt", "w")
-    f.write(time.strftime("%Y-%m-%d %H:%M:%S.%f"))
-    f.close()
+    with open("config/latestTime.txt", "w", encoding='utf-8') as f:
+        f.write(time.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
-def backup_data(data, time, json_data):
+def backup_data(data, time, parsed_data):
     path = os.path.join(BACKUP, time.strftime("%Y%m%d%H%M"))
     os.makedirs(path)
     shutil.copy2(data, path)
-    with open(path + '/upload_body.json', 'w', encoding='utf-8') as f:
-        json.dump(json_data, f, ensure_ascii=False, indent=4)
+    with open(path + '/upload_body.txt', 'w', encoding='utf-8') as f:
+        for line in parsed_data:
+            f.write(f"{line}\n")
+
 
 
 def login_failed_skype(live_id):
     pass
 
+def fail_announcement(live_id):
+    pass
 
 def main():
-    bulk = {"inventories": []}
+
+    #initiate
+    bulk = []
+
     credentials = get_credentials()
+    search_period = get_search_period()
     driver = open_browser()
     if not(order_login(driver, credentials)):
         login_failed_skype(credentials["oota"]["skypeLiveId"])
         return False
-    search_period = get_search_period()
     orders_num = order_search(driver, search_period[0], search_period[1])
-    if orders_num != 0:
+    #orders_num = 1
+    if orders_num != "0":
         downloaded = download_file(driver, DOWNLOADS, "csv")
-        input("check data please")
-        with open(downloaded, newline="", encoding="shift_jis") as csvfile:
+        #downloaded = "output/genjiten.csv"
+        input("change data")
+        with open(downloaded, "r", newline="", encoding="shift_jis") as csvfile:
             stock_info = csv.DictReader(csvfile)
             
             #全行を繰り返して情報を取得し、API用データを作成
@@ -219,20 +233,19 @@ def main():
                     #欠品解消処理
                     else:
                         quantity = 9999
-                    bulk["inventories"].append({
+                    bulk.append({
                             "manageNumber": managenumber,
                             "variantId": sku,
                             "mode": "ABSOLUTE",
                             "quantity": quantity
                         })
-            if bulk != {"inventories": []}:
-                result = update_stock(bulk)
-            result = False
-
-        if type(result) == bool and result == True:
-            record_searched_time(search_period[1])
+            if bulk != []:
+                if not(update_stock(bulk)):
+                    fail_announcement()
+                    return False
         backup_data(downloaded, search_period[1], bulk)
         delete_files_in_directory(DOWNLOADS)
+    record_searched_time(search_period[1])
 
     
 
