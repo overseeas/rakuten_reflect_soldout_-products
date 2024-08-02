@@ -178,12 +178,14 @@ def record_searched_time(time):
     with open("config/latestTime.txt", "w", encoding='utf-8') as f:
         f.write(time.strftime("%Y-%m-%d %H:%M:%S"))
 
-def backup_data(data, time, data):
+def backup_data(data, time, backupdata):
     path = os.path.join(BACKUP, time.strftime("%Y%m%d%H%M"))
     os.makedirs(path)
     shutil.copy2(data, path)
-    with open
-
+    with open(path + '/upload_body.csv', 'w', newline='', encoding='utf-8-sig') as f:
+        spamwriter = csv.writer(f, delimiter=',', quotechar='|', quoting=csv.QUOTE_MINIMAL)
+        spamwriter.writerow(["商品管理番号（商品URL）", "カラー", "度数", "在庫数"])
+        spamwriter.writerows(backupdata)
 
 
 def skype_send(live_id, message):
@@ -215,7 +217,8 @@ def main():
         with open(downloaded, "r", newline="", encoding="shift_jis") as csvfile:
             stock_info = csv.DictReader(csvfile)
 
-            backupdata = []
+            tomin = []
+            tomax = []
             
             #全行を繰り返して情報を取得し、API用データを作成
             for row in stock_info:
@@ -243,8 +246,14 @@ def main():
                     if not(update_stock(managenumber, sku, quantity)):
                         skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
                         return False
-                    backupdata.append([managenumber, re.sub("'", "", row["カラー"]), power, quantity])
-        backup_data(downloaded, search_period[1], backupdata)
+                    
+                    #backupデータの作成
+                    backupinfo = [managenumber, re.sub("'", "", row["カラー"]), power, quantity]
+                    if quantity == 0:
+                        tomin.append(backupinfo)
+                    else:
+                        tomax.append(backupinfo)
+        backup_data(downloaded, search_period[1], tomin + tomax)
         delete_files_in_directory(DOWNLOADS)
     record_searched_time(search_period[1])
 
