@@ -157,30 +157,32 @@ def get_sku(managenumber, color_code, power):
     return False
 
 
-def update_stock(bulkdatas):
+def update_stock(managenumber, sku, quantity):
     credentials = get_credentials()
     auth_headers = encode_api_credentials(credentials["rakuten"]["serviceSecret"], credentials["rakuten"]["licenseKey"])
     auth_headers.update({"Content-Type": "application/json"})
-    listed_bulkdatas = [bulkdatas[i:i + 400] for i in range(0, len(bulkdatas), 400)]
-    for bulkdata in listed_bulkdatas:
-        json_data = {"inventories": bulkdata}
-        r = requests.post("https://api.rms.rakuten.co.jp/es/2.0/inventories/bulk-upsert", json=json_data, headers=auth_headers)
-        if r.status_code != 204:
+    r = requests.put(f"https://api.rms.rakuten.co.jp/es/2.0/inventories/manage-numbers/{managenumber}/variants/{sku}", json={"mode": "ABSOLUTE","quantity": quantity}, headers=auth_headers)
+    if r.status_code != 204:
+        return False
+    r = requests.get(f"https://api.rms.rakuten.co.jp/es/2.0/inventories/manage-numbers/{managenumber}/variants/{sku}", headers=auth_headers)
+    if r.status_code == 200:
+        data = r.json()
+        if data["quantity"] != quantity:
             return False
-        time.sleep(1)    
+    else:
+        return False
+    time.sleep(1)
     return True
         
 def record_searched_time(time):
     with open("config/latestTime.txt", "w", encoding='utf-8') as f:
         f.write(time.strftime("%Y-%m-%d %H:%M:%S"))
 
-def backup_data(data, time, parsed_data):
+def backup_data(data, time, data):
     path = os.path.join(BACKUP, time.strftime("%Y%m%d%H%M"))
     os.makedirs(path)
     shutil.copy2(data, path)
-    with open(path + '/upload_body.txt', 'w', encoding='utf-8') as f:
-        for line in parsed_data:
-            f.write(f"{line}\n")
+    with open
 
 
 
@@ -212,6 +214,8 @@ def main():
         
         with open(downloaded, "r", newline="", encoding="shift_jis") as csvfile:
             stock_info = csv.DictReader(csvfile)
+
+            backupdata = []
             
             #全行を繰り返して情報を取得し、API用データを作成
             for row in stock_info:
@@ -236,17 +240,11 @@ def main():
                     #欠品解消処理
                     else:
                         quantity = 9999
-                    bulk.append({
-                            "manageNumber": managenumber,
-                            "variantId": sku,
-                            "mode": "ABSOLUTE",
-                            "quantity": quantity
-                        })
-            if bulk != []:
-                if not(update_stock(bulk)):
-                    skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
-                    return False
-        backup_data(downloaded, search_period[1], bulk)
+                    if not(update_stock(managenumber, sku, quantity)):
+                        skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
+                        return False
+                    backupdata.append([managenumber, re.sub("'", "", row["カラー"]), power, quantity])
+        backup_data(downloaded, search_period[1], backupdata)
         delete_files_in_directory(DOWNLOADS)
     record_searched_time(search_period[1])
 
