@@ -13,8 +13,6 @@ import requests
 from openpyxl import load_workbook
 import shutil
 import traceback
-from skpy import Skype
-
 
 #PATH
 DOWNLOADS = os.path.abspath("output")
@@ -112,7 +110,7 @@ def get_search_period():
     f = open("config/latestTime.txt")
     str_period_from = f.read()
     f.close()
-    period_from = datetime.datetime.strptime(str_period_from, "%Y-%m-%d %H:%M:%S")
+    period_from = datetime.datetime.strptime(str_period_from, "%Y-%m-%d %H:%M:%S.%f")
     return([period_from, period_to])
 
 def open_browser():
@@ -120,7 +118,7 @@ def open_browser():
     chromeOptions = webdriver.ChromeOptions()
     prefs = {"download.default_directory" : DOWNLOADS}
     chromeOptions.add_experimental_option("prefs",prefs)
-    chromeOptions.add_argument('--headless')
+    #chromeOptions.add_argument('--headless')
     service = Service(excutable_path = "C:\\Users\\winact_user\\Documents\\WinActor\\webdriver\\chromedriver.exe")
     return webdriver.Chrome(service=service, options=chromeOptions)
 
@@ -172,7 +170,7 @@ def update_stock(bulkdatas):
         
 def record_searched_time(time):
     with open("config/latestTime.txt", "w", encoding='utf-8') as f:
-        f.write(time.strftime("%Y-%m-%d %H:%M:%S"))
+        f.write(time.strftime("%Y-%m-%d %H:%M:%S.%f"))
 
 def backup_data(data, time, parsed_data):
     path = os.path.join(BACKUP, time.strftime("%Y%m%d%H%M"))
@@ -184,13 +182,11 @@ def backup_data(data, time, parsed_data):
 
 
 
-def skype_send(live_id, message):
-    credentials = get_credentials()
-    sk = Skype(credentials["skype"]["id"], credentials["skype"]["password"])
+def login_failed_skype(live_id):
+    pass
 
-    # 送信先の設定
-    ch = sk.contacts[live_id].chat
-    ch.sendMsg(message, rich=True)
+def fail_announcement(live_id):
+    pass
 
 def main():
     #initiate
@@ -200,7 +196,7 @@ def main():
     search_period = get_search_period()
     driver = open_browser()
     if not(order_login(driver, credentials)):
-        skype_send(credentials["oota"]["skypeLiveId"], "通販する蔵ログイン失敗しました。</br>楽天欠品作業を中止します。")
+        login_failed_skype(credentials["oota"]["skypeLiveId"])
         return False
     orders_num = order_search(driver, search_period[0], search_period[1])
     #orders_num = 1
@@ -231,7 +227,7 @@ def main():
                     if power == '0.00':
                         minimum_stock *= 3
                     #欠品処理
-                    if status == "終売" or (status == "欠品" and int(stock) < minimum_stock):
+                    if int(stock) < minimum_stock:
                         quantity = 0
                     #欠品解消処理
                     else:
@@ -244,7 +240,7 @@ def main():
                         })
             if bulk != []:
                 if not(update_stock(bulk)):
-                    skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
+                    fail_announcement()
                     return False
         backup_data(downloaded, search_period[1], bulk)
         delete_files_in_directory(DOWNLOADS)
