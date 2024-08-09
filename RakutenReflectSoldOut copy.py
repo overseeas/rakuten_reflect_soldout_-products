@@ -132,12 +132,23 @@ def encode_api_credentials(service_secret, licenseKey):
     byte_data = data.encode('utf-8')
     return {"Authorization" : "ESA " + base64.b64encode(byte_data).decode("utf-8")}
 
-def get_sku(managenumber, color_code, power):
+def get_skus(bulkdatas):
+    credentials = get_credentials()
+    auth_headers = encode_api_credentials(credentials["rakuten"]["serviceSecret"], credentials["rakuten"]["licenseKey"])
+    auth_headers.update({"Content-Type": "application/json"})
+
+    listed_bulkdatas = [bulkdatas[i:i + 50] for i in range(0, len(bulkdatas), 50)]
+    for listed_bulkdata in listed_bulkdatas:
+        bulkdata = []
+        for datas in listed_bulkdata:
+            bulkdata.append(datas["managenumber"])
+        json_data = {"manageNumbers": bulkdata}
+        r = requests.post("https://api.rms.rakuten.co.jp/es/2.0/items/bulk-get", json=json_data,headers=auth_headers)
+
     #度数0.00の場合
     if power == "0.00":
         power = "±0.00(度なし)"
-    credentials = get_credentials()
-    auth_headers = encode_api_credentials(credentials["rakuten"]["serviceSecret"], credentials["rakuten"]["licenseKey"])
+
     r = requests.get("https://api.rms.rakuten.co.jp/es/2.0/items/manage-numbers/" + str(managenumber), headers=auth_headers)
     time.sleep(0.2)
     if r.status_code == 200:
@@ -236,10 +247,8 @@ def main(backupfolder):
     downloaded = "output\\genjiten.csv"
     df.append(pd.read_csv(downloaded, encoding='cp932'))
     df_list = pd.concat(df, ignore_index=True)
-
-    tomin = []
-    tomax = []
-    bulk = []
+    sku_bulk = []
+    update_bulk = []
 
     #全行を繰り返して情報を取得し、API用データを作成
     for index, row in df_list.iterrows():
@@ -247,7 +256,6 @@ def main(backupfolder):
         #空の場合の対応
         if type(row["サイズ"]) == float:
             continue
-        print(str(index))
         managenumber = re.sub("'", "", row["自社品番"])
         color = re.findall("(?<=\().+(?=\))", re.sub("'", "", row["カラー"]))[0]
         power = re.sub("'", "", row["サイズ"])
@@ -257,35 +265,29 @@ def main(backupfolder):
         #マスターファイルにあるか確認して、T列の値を取得
         if color in verified_data:
             minimum_stock = verified_data[color]
-            sku = get_sku(managenumber, color, power)
-            
-            #bulkデータを作成
-            if sku:
-                if power == '0.00':
-                    minimum_stock *= 3
-                #欠品処理
-                if (status == "終売" or status == "欠品") and int(stock) < minimum_stock:
-                    quantity = 0
-                #欠品解消処理
-                else:
-                    quantity = 9999
+            if power == '0.00':
+                minimum_stock *= 3
+            #欠品処理
+            if (status == "終売" or status == "欠品") and int(stock) < minimum_stock:
+                quantity = 0
+            #欠品解消処理
+            else:
+                quantity = 9999
+            sku_bulk.append({"managenumber": managenumber, "color": color, "power": power, "quantity": quantity})
+    skus = get_skus(sku_bulk)
+    print(skus)
+    input("test")
 
-                bulk.append({
-                    "manageNumber": managenumber,
-                    "variantId": sku,
-                    "mode": "ABSOLUTE",
-                    "quantity": quantity
-                    })
+    """update_bulk.append({
+        "manageNumber": managenumber,
+        "variantId": sku,
+        "mode": "ABSOLUTE",
+        "quantity": quantity
+        })"""
 
-                backupinfo = [managenumber, re.sub("'", "", row["カラー"]), power, quantity]
-                if quantity == 0:
-                    tomin.append(backupinfo)
-                else:
-                    tomax.append(backupinfo)
-
-    if bulk != []:
+    if update_bulk != []:
         backup_data(backupfolder, tomin + tomax)
-        if not(update_stock(bulk)):
+        if not(update_stock(update_bulk)):
             skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
             return False
                 
