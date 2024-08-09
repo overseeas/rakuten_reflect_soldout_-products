@@ -151,21 +151,20 @@ def get_sku(managenumber, color_code, power):
     return False
 
 
-def update_stock(managenumber, sku, quantity):
+def update_stock(bulkdatas):
     credentials = get_credentials()
     auth_headers = encode_api_credentials(credentials["rakuten"]["serviceSecret"], credentials["rakuten"]["licenseKey"])
     auth_headers.update({"Content-Type": "application/json"})
-    r = requests.put(f"https://api.rms.rakuten.co.jp/es/2.0/inventories/manage-numbers/{managenumber}/variants/{sku}", json={"mode": "ABSOLUTE","quantity": quantity}, headers=auth_headers)
-    if r.status_code != 204:
-        return False
-    r = requests.get(f"https://api.rms.rakuten.co.jp/es/2.0/inventories/manage-numbers/{managenumber}/variants/{sku}", headers=auth_headers)
-    if r.status_code == 200:
-        data = r.json()
-        if data["quantity"] != quantity:
-            return False
-    else:
-        return False
-    time.sleep(1)
+    listed_bulkdatas = [bulkdatas[i:i + 400] for i in range(0, len(bulkdatas), 400)]
+
+    print(listed_bulkdatas)
+    if input("Test to stop. [y] to proceed") == "y":
+        for bulkdata in listed_bulkdatas:
+            json_data = {"inventories": bulkdata}
+            r = requests.post("https://api.rms.rakuten.co.jp/es/2.0/inventories/bulk-upsert", json=json_data, headers=auth_headers)
+            if r.status_code != 204:
+                return False
+            time.sleep(1)  
     return True
         
 def record_searched_time(time):
@@ -206,7 +205,7 @@ def main(backupfolder):
 
     credentials = get_credentials()
     search_period = get_search_period()
-    driver = open_browser()
+    """driver = open_browser()
     if not(order_login(driver, credentials)):
         skype_send(credentials["oota"]["skypeLiveId"], "通販する蔵ログイン失敗しました。</br>楽天欠品作業を中止します。")
         return False
@@ -217,7 +216,7 @@ def main(backupfolder):
     if order_search(driver, "soldout") != "0":
         downloaded = download_file(driver, DOWNLOADS, "csv")
         df.append(pd.read_csv(downloaded, encoding='cp932'))
-        os.remove(downloaded)
+        #os.remove(downloaded)
               
 
     #終売
@@ -230,17 +229,25 @@ def main(backupfolder):
     if order_search(driver, "empty", search_period[0], search_period[1]) != "0":
         downloaded = download_file(driver, DOWNLOADS, "csv")
         df.append(pd.read_csv(downloaded, encoding='cp932'))
-        os.remove(downloaded)
+        os.remove(downloaded)"""
     
     #3ファイルをまとめる
+    df = []
+    downloaded = "output\\genjiten.csv"
+    df.append(pd.read_csv(downloaded, encoding='cp932'))
     df_list = pd.concat(df, ignore_index=True)
 
     tomin = []
     tomax = []
+    bulk = []
 
     #全行を繰り返して情報を取得し、API用データを作成
     for index, row in df_list.iterrows():
         
+        #空の場合の対応
+        if type(row["サイズ"]) == float:
+            continue
+        print(str(index))
         managenumber = re.sub("'", "", row["自社品番"])
         color = re.findall("(?<=\().+(?=\))", re.sub("'", "", row["カラー"]))[0]
         power = re.sub("'", "", row["サイズ"])
@@ -262,18 +269,27 @@ def main(backupfolder):
                 #欠品解消処理
                 else:
                     quantity = 9999
-                if not(update_stock(managenumber, sku, quantity)):
-                    skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
-                    return False
-                
-                #backupデータの作成
+
+                bulk.append({
+                    "manageNumber": managenumber,
+                    "variantId": sku,
+                    "mode": "ABSOLUTE",
+                    "quantity": quantity
+                    })
+
                 backupinfo = [managenumber, re.sub("'", "", row["カラー"]), power, quantity]
                 if quantity == 0:
                     tomin.append(backupinfo)
                 else:
                     tomax.append(backupinfo)
+
+    if bulk != []:
         backup_data(backupfolder, tomin + tomax)
-        delete_files_in_directory(DOWNLOADS)
+        if not(update_stock(bulk)):
+            skype_send(credentials["oota"]["skypeLiveId"], "楽天欠品処理に失敗しました。</br>backupフォルダを確認してください。")
+            return False
+                
+                #backupデータの作成
     record_searched_time(search_period[1])
 
     
